@@ -1,3 +1,4 @@
+using dotnetcore_crud_app.Helpers;
 using dotnetcore_crud_app.Models;
 using dotnetcore_crud_app.Services.DonationCandidateServices;
 using Microsoft.AspNetCore.Builder;
@@ -23,14 +24,20 @@ namespace dotnetcore_crud_app
         {
             services.AddControllers();
 
-            services.AddDbContext<DonationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+            services.AddDbContext<DonationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(Constants.devConnect)));
 
             services.AddScoped<IDonationCandidateService, DonationCandidateService>();
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options => options.WithOrigins(Constants.url)
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
